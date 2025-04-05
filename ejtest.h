@@ -5,11 +5,13 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define ejtest_expect_bool(p, a, b) ejtest_expect_bool_file_line((p), (a), (b), __FILE__, __LINE__)
 #define ejtest_expect_int(p, a, b) ejtest_expect_int_file_line((p), (a), (b), __FILE__, __LINE__)
 #define ejtest_expect_char(p, a, b) ejtest_expect_char_file_line((p), (a), (b), __FILE__, __LINE__)
 #define ejtest_expect_float(p, a, b) ejtest_expect_float_file_line((p), (a), (b), __FILE__, __LINE__)
+#define ejtest_expect_struct(p, a, b) ejtest_expect_struct_file_line((p), &(a), &(b), sizeof(a), sizeof(b), __FILE__, __LINE__)
 
 #define ejtest_print_result(name, result) printf("== %-30s: %s ==\n", (name), (result) ? "success" : "FAILURE");
 
@@ -55,5 +57,13 @@ void ejtest_expect_float_file_line(bool * p, float a, float b, const char * file
     printf("%s,%d:: Expected nearly equal: |%f|; |%f|\n", file, line, a, b);
     *p  = false;
 }
-
+void ejtest_expect_struct_file_line(bool * p, void * a, void * b, int a_size, int b_size, const char * file, int line)
+{
+   if (a_size == b_size && memcmp(a, b, a_size) == 0) {
+       *p = *p && true;
+       return;
+   }
+   printf("%s,%d:: Expected equal structs\n", file, line);
+   *p = false;
+};
 #endif // EJ_TEST_H
