@@ -42,6 +42,16 @@ typedef struct {
     char d;
 } ExampleStruct;
 
+bool compare_example(void * a, void * b)
+{
+    ExampleStruct * A = (ExampleStruct *) a;
+    ExampleStruct * B = (ExampleStruct *) b;
+    return A->a == B->a &&
+        A->b == B->b &&
+        nearly_equal(A->c, B->c) &&
+        A->d == B->d;
+}
+
 void testStructs()
 {
     bool R = true;
@@ -49,31 +59,31 @@ void testStructs()
     A = (ExampleStruct){0};
     B = (ExampleStruct){0};
 
-    ejtest_expect_struct(&R, A, B);
+    ejtest_expect_struct(&R, A, B, compare_example);
 
     A = (ExampleStruct){0};
     B = (ExampleStruct){0};
     A.a = true;
     B.a = false;
-    ejtest_expect_struct(&R, A, B);
+    ejtest_expect_struct(&R, A, B, compare_example);
 
     A = (ExampleStruct){0};
     B = (ExampleStruct){0};
     A.b = 1;
     B.b = 0;
-    ejtest_expect_struct(&R, A, B);
+    ejtest_expect_struct(&R, A, B, compare_example);
 
     A = (ExampleStruct){0};
     B = (ExampleStruct){0};
     A.c = 1.0;
     B.c = 1.01;
-
-    ejtest_expect_struct(&R, A, B);
+    ejtest_expect_struct(&R, A, B, compare_example);
+    
     A = (ExampleStruct){0};
     B = (ExampleStruct){0};
     A.d = 'a';
     B.d = 'b';
-    ejtest_expect_struct(&R, A, B);
+    ejtest_expect_struct(&R, A, B, compare_example);
 
     ejtest_print_result("testStructs", R);
 }
