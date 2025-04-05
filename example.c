@@ -48,7 +48,7 @@ bool compare_example(void * a, void * b)
     ExampleStruct * B = (ExampleStruct *) b;
     return A->a == B->a &&
         A->b == B->b &&
-        nearly_equal(A->c, B->c) &&
+        ejtest_nearly_equal(A->c, B->c) &&
         A->d == B->d;
 }
 

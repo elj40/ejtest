@@ -15,7 +15,7 @@
 
 #define ejtest_print_result(name, result) printf("== %-30s: %s ==\n", (name), (result) ? "success" : "FAILURE");
 
-bool nearly_equal(float a, float b)
+bool ejtest_nearly_equal(float a, float b)
 {
 #define EJ_TEST_EPSILON (1.0/4096.0)
     if (a > b && a - b > EJ_TEST_EPSILON) return false;
@@ -52,7 +52,7 @@ void ejtest_expect_char_file_line(bool * p, char a, char b, const char * file, i
 }
 void ejtest_expect_float_file_line(bool * p, float a, float b, const char * file, int line)
 {
-    if (nearly_equal(a, b)) {
+    if (ejtest_nearly_equal(a, b)) {
         *p = *p && true;
         return;
     }
