@@ -1,6 +1,8 @@
 #ifndef EJ_TEST_H
 #define EJ_TEST_H
 
+#define EJ_TEST_VERSION 1.0.0
+
 #include <stdio.h>
 #include <stdbool.h>
 
