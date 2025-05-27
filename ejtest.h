@@ -7,11 +7,11 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define ejtest_expect_bool(p, a, b) ejtest_expect_bool_file_line((p), (a), (b), __FILE__, __LINE__)
-#define ejtest_expect_int(p, a, b) ejtest_expect_int_file_line((p), (a), (b), __FILE__, __LINE__)
-#define ejtest_expect_char(p, a, b) ejtest_expect_char_file_line((p), (a), (b), __FILE__, __LINE__)
-#define ejtest_expect_float(p, a, b) ejtest_expect_float_file_line((p), (a), (b), __FILE__, __LINE__)
-#define ejtest_expect_struct(p, a, b, cmp) ejtest_expect_struct_file_line((p), &(a), &(b), sizeof(a), sizeof(b), (cmp), __FILE__, __LINE__)
+#define ejtest_expect_bool(p, a, b) ejtest_expect_bool_file_line((p), (a), (b), #a, #b, __FILE__, __LINE__)
+#define ejtest_expect_int(p, a, b) ejtest_expect_int_file_line((p), (a), (b), #a, #b,__FILE__, __LINE__)
+#define ejtest_expect_char(p, a, b) ejtest_expect_char_file_line((p), (a), (b), #a, #b,__FILE__, __LINE__)
+#define ejtest_expect_float(p, a, b) ejtest_expect_float_file_line((p), (a), (b), #a, #b,__FILE__, __LINE__)
+#define ejtest_expect_struct(p, a, b, cmp) ejtest_expect_struct_file_line((p), &(a), &(b), (cmp), sizeof(a), sizeof(b), #a, #b, __FILE__, __LINE__)
 
 //==============================================
 // I got the following from RabaDabaDoba at
@@ -37,54 +37,81 @@ bool ejtest_nearly_equal(float a, float b)
     else if (b > a && b - a > EJ_TEST_EPSILON) return false;
     return true;
 }
-bool ejtest_expect_bool_file_line(bool * p, bool a, bool b, const char * file, int line)
+bool ejtest_expect_bool_file_line(
+        bool * p,
+        bool a, bool b,
+        const char * a_str, const char * b_str,
+        const char * file, int line)
 {
     if (a == b) {
         *p = *p && true;
         return *p;
     }
-    printf("%s,%d:: Expected equal: |%d|; |%d|\n", file, line, a, b);
+    const char * a_val = a ? "true" : "false";
+    const char * b_val = b ? "true" : "false";
+    printf("%s,%d:: Expected equal: |%s|(%s); |%s|(%s)\n", file, line, a_str, a_val, b_str, b_val);
     *p = false;
     return *p;
 }
-bool ejtest_expect_int_file_line(bool * p, int a, int b, const char * file, int line)
+bool ejtest_expect_int_file_line(
+        bool * p,
+        int a, int b,
+        const char * a_str, const char * b_str,
+        const char * file, int line)
 {
     if (a == b) {
         *p = *p && true;
         return *p;
     }
-    printf("%s,%d:: Expected equal: |%d|; |%d|\n", file, line, a, b);
+    printf("%s,%d:: Expected equal: |%s|(%d); |%s|(%d)\n", file, line, a_str, a, b_str, b);
     *p = false;
     return *p;
 }
 
-bool ejtest_expect_char_file_line(bool * p, char a, char b, const char * file, int line)
+bool ejtest_expect_char_file_line(
+        bool * p,
+        char a, char b,
+        const char * a_str, const char * b_str,
+        const char * file, int line)
 {
     if (a == b) {
         *p = *p && true;
         return *p;
     }
-    printf("%s,%d:: Expected equal: |%c|; |%c|\n", file, line, a, b);
+    //printf("%s,%d:: Expected equal: |%c|; |%c|\n", file, line, a, b);
+    printf("%s,%d:: Expected equal: |%s|(%c); |%s|(%c)\n", file, line, a_str, a, b_str, b);
     *p = false;
     return *p;
 }
-bool ejtest_expect_float_file_line(bool * p, float a, float b, const char * file, int line)
+bool ejtest_expect_float_file_line(
+        bool * p,
+        float a, float b,
+        const char * a_str, const char * b_str,
+        const char * file, int line)
 {
     if (ejtest_nearly_equal(a, b)) {
         *p = *p && true;
         return *p;
     }
-    printf("%s,%d:: Expected nearly equal: |%f|; |%f|\n", file, line, a, b);
+    //printf("%s,%d:: Expected nearly equal: |%f|; |%f|\n", file, line, a, b);
+    printf("%s,%d:: Expected equal: |%s|(%f); |%s|(%f)\n", file, line, a_str, a, b_str, b);
     *p  = false;
     return *p;
 }
-bool ejtest_expect_struct_file_line(bool * p, void * a, void * b, int a_size, int b_size, bool (*compare)(void *, void*), const char * file, int line)
+bool ejtest_expect_struct_file_line(
+        bool * p,
+        void * a, void * b,
+        bool (*compare)(void *, void*),
+        int a_size, int b_size,
+        const char * a_str, const char * b_str,
+        const char * file, int line)
 {
    if (a_size == b_size && (*compare)(a, b)) {
        *p = *p && true;
        return *p;
    }
-   printf("%s,%d:: Expected equal structs\n", file, line);
+   //printf("%s,%d:: Expected equal structs\n", file, line);
+   printf("%s,%d:: Expected equal: |%s|; |%s|\n", file, line, a_str, b_str);
    *p = false;
    return *p;
 };
